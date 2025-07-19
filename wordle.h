@@ -56,4 +56,21 @@ void check_word(const char* guess, const char* answer, Color* results);
 */
 void populate_words(const char* file_name, char** words);
 
+/*
+    Selects a random word from an array of user-provided words.
+
+    Parameters:
+        - words: caller-allocated array of NUM_WORDS pointers, where each words[i] points to
+                 a buffer of at least WORD_LEN + 1 bytes (assumed, no input validation is done!)
+
+    Return values:
+        - A pointer to one of the strings in the 'words' array
+*/
+char* random_word(char** words);
+
+/*
+    Helper function for random word generation. Sets the seed.
+*/
+void set_seed();
+
 #endif

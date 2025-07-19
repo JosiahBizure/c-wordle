@@ -2,6 +2,7 @@
 #include <stdio.h>  // printf, fopen
 #include <string.h> // strcspn, strncpy
 #include <stdlib.h> // malloc, free
+#include <time.h>   // time
 
 #include "wordle.h"
 
@@ -46,6 +47,15 @@ void populate_words(const char* file_name, char** words) {
     fclose(fd);
 }
 
+char* random_word(char** words) {
+    size_t index = rand() % NUM_WORDS;
+    return words[index];
+}
+
+void set_seed() {
+    srand((unsigned int)time(NULL));
+}
+
 int main(int argc, char** argv) {
     if (argc != 2) {
         // Some kind of error message
@@ -62,9 +72,10 @@ int main(int argc, char** argv) {
 
     populate_words("words5.txt", words);
 
-    // Print the first 10 words as a sanity check
-    for (size_t i = 0; i < 10; ++i) {
-        printf("Word %zu: '%s'\n", i, words[i]);
+    set_seed();
+
+    for (int i = 0; i < 5; ++i) {
+        printf("Random word %d: %s\n", i, random_word(words));
     }
 
     // Free memory
