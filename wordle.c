@@ -26,7 +26,7 @@ void check_word(const char* guess, const char* answer, Color* results) {
 
 
 void populate_words(const char* file_name, char** words) {
-    char buffer[WORD_LEN + 2];
+    char buffer[WORD_LEN + 3]; // +1 for /r, +1 for /n, and +1 for \0
     FILE* fd = fopen(file_name, "r");
     if (fd == NULL) {
         perror("[ERROR] populate_words() fopen()");
