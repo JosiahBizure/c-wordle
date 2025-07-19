@@ -4,6 +4,7 @@
 #include <stddef.h>  // for size_t
 
 #define WORD_LEN 5
+#define NUM_WORDS 5196
 
 typedef enum Color {
     GREEN,
@@ -39,5 +40,20 @@ Color check_char(const char guess_char, const size_t index, const char* answer);
         - Each results[i] will be set to GREEN, YELLOW, or RED based on match status.
 */
 void check_word(const char* guess, const char* answer, Color* results);
+
+/*
+    Populates user-provided array of string buffers with 5-letter words from file.
+
+    Parameters:
+        - file_name: name of file containing one word per line
+        - words: caller-allocated array of NUM_WORDS pointers, where each words[i] points to
+                 a buffer of at least WORD_LEN + 1 bytes (assumed, no input validation is done!)
+
+    Notes:
+        - This function does not allocate any memory.
+        - Caller must free each words[i] after use.
+        - Only the first NUM_WORDS lines in the file will be read.
+*/
+void populate_words(const char* file_name, char** words);
 
 #endif
