@@ -86,6 +86,11 @@ void set_seed();
         - Prompts the user and prints color-coded feedback
         - Ends on win or max attempts
 */
-void game_loop(const char* answer, size_t word_len);
+void game_loop(const char* answer, size_t word_len, char** words);
+
+/*
+    Verifies that an entered guess is a part of the English language.
+*/
+int is_valid_word(const char* guess, char** words);
 
 #endif

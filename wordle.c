@@ -59,13 +59,14 @@ void set_seed() {
 }
 
 
-void game_loop(const char* answer, size_t word_len) {
+void game_loop(const char* answer, size_t word_len, char** words) {
     char guess[word_len + 2];  // +1 for newline, +1 for null
     Color results[word_len];
 
     printf("Welcome to Wordle in C!\nGuess the %zu-letter word.\n\n", word_len);
 
-    for (int attempt = 0; attempt < MAX_ATTEMPTS; ++attempt) {
+    int attempt = 0;
+    while (attempt < MAX_ATTEMPTS) {
         printf("Attempt %d/%d: ", attempt + 1, MAX_ATTEMPTS);
 
         // Get user input
@@ -90,6 +91,13 @@ void game_loop(const char* answer, size_t word_len) {
             }
         }
 
+        if (!is_valid_word(guess, words)) {
+            printf("'%s' is not a valid word.\n\n", guess);
+            continue;
+        }
+
+        ++attempt;
+
         // Evaluate guess
         check_word(guess, answer, results);
 
@@ -98,7 +106,7 @@ void game_loop(const char* answer, size_t word_len) {
             switch (results[i]) {
                 case GREEN:  printf("\033[0;32m%c\033[0m", guess[i]); break;
                 case YELLOW: printf("\033[0;33m%c\033[0m", guess[i]); break;
-                case RED:    printf("\033[0;90m%c\033[0m", guess[i]); break;
+                case RED:    printf("\033[0;31m%c\033[0m", guess[i]); break;
             }
         }
         printf("\n\n");
@@ -111,6 +119,16 @@ void game_loop(const char* answer, size_t word_len) {
     }
 
     printf("Out of attempts! The word was \"%s\".\n", answer);
+}
+
+
+int is_valid_word(const char* guess, char** words) {
+    for (size_t i = 0; i < NUM_WORDS; ++i) {
+        if (strcmp(guess, words[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 
@@ -134,7 +152,7 @@ int main(int argc, char** argv) {
     char* answer = random_word(words);
 
     // Play
-    game_loop(answer, WORD_LEN);
+    game_loop(answer, WORD_LEN, words);
 
     // Free memory
     for (size_t i = 0; i < NUM_WORDS; ++i) {
