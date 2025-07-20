@@ -47,19 +47,79 @@ void populate_words(const char* file_name, char** words) {
     fclose(fd);
 }
 
+
 char* random_word(char** words) {
     size_t index = rand() % NUM_WORDS;
     return words[index];
 }
 
+
 void set_seed() {
     srand((unsigned int)time(NULL));
 }
+
+
+void game_loop(const char* answer, size_t word_len) {
+    char guess[word_len + 2];  // +1 for newline, +1 for null
+    Color results[word_len];
+
+    printf("Welcome to Wordle in C!\nGuess the %zu-letter word.\n\n", word_len);
+
+    for (int attempt = 0; attempt < MAX_ATTEMPTS; ++attempt) {
+        printf("Attempt %d/%d: ", attempt + 1, MAX_ATTEMPTS);
+
+        // Get user input
+        if (fgets(guess, sizeof(guess), stdin) == NULL) {
+            printf("Error reading input.\n");
+            continue;
+        }
+
+        // Remove newline characters
+        guess[strcspn(guess, "\r\n")] = '\0';
+
+        // Validate length
+        if (strlen(guess) != word_len) {
+            printf("Guess must be exactly %zu letters.\n\n", word_len);
+            continue;
+        }
+
+        // Convert guess to lowercase
+        for (size_t i = 0; i < word_len; ++i) {
+            if (guess[i] >= 'A' && guess[i] <= 'Z') {
+                guess[i] = guess[i] - 'A' + 'a';
+            }
+        }
+
+        // Evaluate guess
+        check_word(guess, answer, results);
+
+        // Print colored result
+        for (size_t i = 0; i < word_len; ++i) {
+            switch (results[i]) {
+                case GREEN:  printf("\033[0;32m%c\033[0m", guess[i]); break;
+                case YELLOW: printf("\033[0;33m%c\033[0m", guess[i]); break;
+                case RED:    printf("\033[0;90m%c\033[0m", guess[i]); break;
+            }
+        }
+        printf("\n\n");
+
+        // Win condition
+        if (strcmp(guess, answer) == 0) {
+            printf("You guessed it! The word was \"%s\".\n", answer);
+            return;
+        }
+    }
+
+    printf("Out of attempts! The word was \"%s\".\n", answer);
+}
+
 
 int main(int argc, char** argv) {
     if (argc != 2) {
         // Some kind of error message
     }
+
+    set_seed();
 
     char* words[NUM_WORDS];
     for (size_t i = 0; i < NUM_WORDS; ++i) {
@@ -71,12 +131,10 @@ int main(int argc, char** argv) {
     }
 
     populate_words("words5.txt", words);
+    char* answer = random_word(words);
 
-    set_seed();
-
-    for (int i = 0; i < 5; ++i) {
-        printf("Random word %d: %s\n", i, random_word(words));
-    }
+    // Play
+    game_loop(answer, WORD_LEN);
 
     // Free memory
     for (size_t i = 0; i < NUM_WORDS; ++i) {

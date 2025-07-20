@@ -5,6 +5,7 @@
 
 #define WORD_LEN 5
 #define NUM_WORDS 5196
+#define MAX_ATTEMPTS 6
 
 typedef enum Color {
     GREEN,
@@ -72,5 +73,19 @@ char* random_word(char** words);
     Helper function for random word generation. Sets the seed.
 */
 void set_seed();
+
+/*
+    Runs the main Wordle game loop.
+
+    Parameters:
+        - answer: the target 5-letter word
+        - word_len: length of the word (typically 5)
+
+    Notes:
+        - Allows MAX_ATTEMPTS guesses
+        - Prompts the user and prints color-coded feedback
+        - Ends on win or max attempts
+*/
+void game_loop(const char* answer, size_t word_len);
 
 #endif
